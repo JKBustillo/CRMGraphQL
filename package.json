@@ -10,7 +10,9 @@
   "author": "Jose Bustillo",
   "license": "ISC",
   "dependencies": {
-    "apollo-server": "^2.16.1"
+    "apollo-server": "^2.16.1",
+    "dotenv": "^8.2.0",
+    "mongoose": "^5.9.27"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
