@@ -4,7 +4,11 @@ const resolvers = {
         getAny: () => "E"
     },
     Mutation: {
-        newUser: () => "New User WIP"
+        newUser: (_, { input }) => {
+            console.log(input);
+            
+            return "New User WIP"
+        }
     }
 }
 
