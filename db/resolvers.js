@@ -94,7 +94,20 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             }
-        }
+        },
+        updateProduct: async (_, { id, input }) => {
+            // Check if products exists
+            let product = await Product.findById(id);
+
+            if (!product) {
+                throw new Error('Product not found');
+            }
+
+            // Store in DB
+            product = await Product.findByIdAndUpdate({ _id: id }, input, { new: true });
+
+            return product;
+        },
     }
 }
 
