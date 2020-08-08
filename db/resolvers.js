@@ -12,7 +12,11 @@ const createToken = (user, secret, expiresIn) => {
 // Resolvers
 const resolvers = {
     Query: {
-        getAny: () => "E"
+        getUser: async (_, { token }) => {
+            const userId = await jwt.verify(token, process.env.SECRET);
+
+            return userId;
+        }
     },
     Mutation: {
         newUser: async (_, { input }) => {
