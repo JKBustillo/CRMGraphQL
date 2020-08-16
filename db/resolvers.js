@@ -53,6 +53,20 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             }
+        },
+        getClient: async (_, {id}, ctx) => {
+            // Check if client exists
+            const client = await Client.findById(id);
+
+            if (!client) {
+                throw new Error("Client not found");
+            }
+
+            if (client.seller.toString() !== ctx.user.id.toString()) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            return client;
         }
     },
     Mutation: {
