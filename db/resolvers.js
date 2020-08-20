@@ -191,6 +191,24 @@ const resolvers = {
             client = await Client.findOneAndUpdate({_id: id}, input, {new: true});
             
             return client;
+        },
+        deleteClient: async (_, { id }, ctx) => {
+            // Check if client exists
+            let client = await Client.findById(id);
+
+            if (!client) {
+                throw new Error("Client not found");
+            }
+
+            // Check if the seller is who edits
+            if (client.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            // Delete client
+            await Client.findByIdAndDelete({_id: id});
+
+            return "Client deleted";
         }
     }
 }
