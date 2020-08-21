@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Product = require("../models/Product");
 const Client = require("../models/Client");
+const Order = require("../models/Order");
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require("dotenv").config({path: '.env'});
@@ -209,6 +210,47 @@ const resolvers = {
             await Client.findByIdAndDelete({_id: id});
 
             return "Client deleted";
+        },
+        newOrder: async (_, { input }, ctx) => {
+            const { client } = input;
+
+            // Check if client exists
+            let clientExists = await Client.findById(client);
+
+            if (!clientExists) {
+                throw new Error("Client not found");
+            }
+
+            // Check if seller has the client
+            if (clientExists.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            // Check if there's stock available
+            for await (const item of input.order) {
+                const { id } = item;
+
+                const product = await Product.findById(id);
+
+                if (item.amount > product.stock) {
+                    throw new Error(`The item ${product.name} exceeds the available amount`);
+                } else {
+                    product.stock = product.stock - item.amount;
+
+                    await product.save();
+                }
+            }
+
+            // Create a new order
+            const newOrder = new Order(input);
+
+            // Set a seller
+            newOrder.seller = ctx.user.id;
+
+            // Save in DB
+            const response = await newOrder.save();
+
+            return response;
         }
     }
 }
