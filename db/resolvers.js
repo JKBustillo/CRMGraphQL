@@ -101,6 +101,11 @@ const resolvers = {
             }
 
             return order;
+        },
+        getOrdersState: async(_, { state }, ctx) => {
+            const orders = await Order.find({ seller: ctx.user.id, state });
+
+            return orders;
         }
     },
     Mutation: {
