@@ -76,10 +76,10 @@ const typeDefs = gql`
     }
 
     input ClientInput {
-        name: String!,
-        lastName: String!,
-        enterprise: String!,
-        email: String!,
+        name: String!
+        lastName: String!
+        enterprise: String!
+        email: String!
         telephone: String
     }
 
@@ -90,8 +90,8 @@ const typeDefs = gql`
 
     input OrderInput {
         order: [OrderProductInput]
-        total: Float!
-        client: ID!
+        total: Float
+        client: ID
         state: OrderState
     }
 
