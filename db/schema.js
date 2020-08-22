@@ -47,6 +47,11 @@ const typeDefs = gql`
         amount: Int
     }
 
+    type TopClient {
+        total: Float
+        client: [Client]
+    }
+
     input UserInput {
         name: String!
         lastName: String!
@@ -109,6 +114,9 @@ const typeDefs = gql`
         getOrderSeller: [Order]
         getOrder(id: ID!): Order
         getOrdersState(state: String!): [Order]
+
+        # Advanced
+        bestClients: [TopClient]
     }
 
     type Mutation {
