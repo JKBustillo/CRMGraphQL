@@ -284,6 +284,54 @@ const resolvers = {
             const response = await newOrder.save();
 
             return response;
+        },
+        updateOrder: async (_, { id, input }, ctx) => {
+            const { client } = input;
+
+            // Check if the order exists
+            const orderExists = await Order.findById(id);
+
+            if (!orderExists) {
+                throw new Error('Order not found');
+            }
+
+            // Check if client exists
+            let clientExists = await Client.findById(client);
+
+            if (!clientExists) {
+                throw new Error("Client not found");
+            }
+
+            // Check if the current seller is the owner
+            if (orderExists.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            // Check if seller has the client
+            if (clientExists.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            if (input.order) {
+                // Check if there's stock available
+                for await (const item of input.order) {
+                    const { id } = item;
+
+                    const product = await Product.findById(id);
+
+                    if (item.amount > product.stock) {
+                        throw new Error(`The item ${product.name} exceeds the available amount`);
+                    } else {
+                        product.stock = product.stock - item.amount;
+
+                        await product.save();
+                    }
+                }
+            }
+
+            const response = await Order.findOneAndUpdate({ _id: id }, input, { new: true });
+
+            return response;
         }
     }
 }
