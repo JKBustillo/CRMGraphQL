@@ -156,6 +156,11 @@ const resolvers = {
             ]);
 
             return sellers;
+        },
+        searchProduct: async (_, { text }) => {
+            const products = await Product.find({ $text: { $search: text } }).limit(10);
+
+            return products;
         }
     },
     Mutation: {
