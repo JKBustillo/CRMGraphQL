@@ -332,6 +332,24 @@ const resolvers = {
             const response = await Order.findOneAndUpdate({ _id: id }, input, { new: true });
 
             return response;
+        },
+        deleteOrder: async (_, { id }, ctx) => {
+            // Check if the order exists
+            const order = await Order.findById(id);
+
+            if (!order) {
+                throw new Error('Order not found');
+            }
+
+            // Check if the current seller is the owner
+            if (order.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            // Delete from DB
+            await Order.findOneAndDelete({_id: id});
+
+            return "Order deleted";
         }
     }
 }
