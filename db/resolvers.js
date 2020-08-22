@@ -123,11 +123,39 @@ const resolvers = {
                     }
                 },
                 {
+                    $limit: 10
+                },
+                {
                     $sort: { total: -1 }
                 }
             ]);
 
             return clients;
+        },
+        bestSellers: async () => {
+            const sellers = await Order.aggregate([
+                { $match: { state: "COMPLETED" } },
+                { $group: {
+                    _id: '$seller',
+                    total: { $sum: '$total' }
+                }},
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: '_id',
+                        foreignField: '_id',
+                        as: 'seller'
+                    }
+                },
+                {
+                    $limit: 5
+                },
+                {
+                    $sort: { total: -1 }
+                }
+            ]);
+
+            return sellers;
         }
     },
     Mutation: {
