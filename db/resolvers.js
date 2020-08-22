@@ -86,6 +86,21 @@ const resolvers = {
             } catch (error) {
                 console.log(error);
             }
+        },
+        getOrder: async (_, { id }, ctx) => {
+            // Check if the order exists
+            const order = await Order.findById(id);
+
+            if (!order) {
+                throw new Error('Order not found');
+            }
+
+            // Check if the current seller is the owner
+            if (order.seller.toString() !== ctx.user.id) {
+                throw new Error("You're not allowed to see this");
+            }
+
+            return order;
         }
     },
     Mutation: {
