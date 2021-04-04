@@ -86,6 +86,8 @@ const typeDefs = gql`
     input OrderProductInput {
         id: ID
         amount: Int
+        name: String
+        price: Float
     }
 
     input OrderInput {
